@@ -1,8 +1,8 @@
 import { restClient } from "@polygon.io/client-js";
 import axios from "axios";
 
-const getStockAggregates = async (tickerSymbol: string) => {
-  const rest = restClient(process.env.POLY_API_KEY);
+const getStockAggregates = async (tickerSymbol: string, apiKey: string) => {
+  const rest = restClient(apiKey);
 
   const endDate = new Date();
   const startDate = new Date();
@@ -23,15 +23,20 @@ const getStockAggregates = async (tickerSymbol: string) => {
     return {
       aggregates: aggregatesData.results,
     };
-  } catch (error) {
-    console.error("An error happened:", error);
-    throw error; // Rethrow the error to handle it in the component
+  } catch (error: any) {
+    // Check if the error is a 429 status code (Too Many Requests)
+    if (error.response && error.response.status === 429) {
+      // Provide a specific error message for rate limiting
+      throw new Error("Too many requests. Please wait 1 minute and try again.");
+    } else {
+      // Rethrow other errors
+      console.error("An error happened:", error);
+      throw error;
+    }
   }
 };
 
-const getPreviousDayClose = async (symbol: string) => {
-  // Replace with your Polygon API key
-  const apiKey = process.env.POLY_API_KEY;
+const getPreviousDayClose = async (symbol: string, apiKey: string) => {
   // Polygon API base URL
   const baseUrl = "https://api.polygon.io/v2/aggs/ticker";
 

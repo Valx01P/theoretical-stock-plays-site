@@ -44,11 +44,13 @@ const CandlestickChart: React.FC = () => {
   const [tickerSymbol, setTickerSymbol] = useState<string>("");
   const [chartType, setChartType] = useState<string>("bar");
   const [latestPrice, setLatestPrice] = useState<number | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const apiKey = process.env.NEXT_PUBLIC_POLY_API_KEY || ""; // Ensure apiKey is defined
 
   const fetchData = async (symbol: string) => {
     try {
-      const aggregatesResponse = await getStockAggregates(symbol);
-      const previousClose = await getPreviousDayClose(symbol);
+      const aggregatesResponse = await getStockAggregates(symbol, apiKey);
+      const previousClose = await getPreviousDayClose(symbol, apiKey);
 
       if (aggregatesResponse.aggregates) {
         const data: StockData[] = aggregatesResponse.aggregates.map(
@@ -64,11 +66,21 @@ const CandlestickChart: React.FC = () => {
         setChartData(data);
         setLatestPrice(previousClose);
         setTickerSymbol(symbol);
+        setError(null); // Clear any previous errors
       } else {
         console.error("No results found in the API response.");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("An error happened:", error);
+
+      // Check if the error is a 429 status code (Too Many Requests)
+      if (error.response && error.response.status === 429) {
+        setError("Too many requests. Please wait 1 minute and try again.");
+      } else {
+        setError(
+          "An error occurred. Possible wrong format. Correct Format Example: TSLA"
+        );
+      }
     }
   };
 
@@ -90,31 +102,41 @@ const CandlestickChart: React.FC = () => {
   useEffect(() => {
     // Fetch default data on component mount
     fetchData("SPY");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <div>
-      <h1>
+    <div className="text-center">
+      <h1 className="mb-8">
         {chartType === "bar" ? "Candlestick Chart" : "Line Chart"} -{" "}
         {tickerSymbol}
       </h1>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="mb-2">
         <input
           type="text"
           value={tickerSymbol}
           onChange={(e) => setTickerSymbol(e.target.value)}
           placeholder="Enter stock symbol"
-          style={{ color: "black" }}
+          className="p-2 text-black"
         />
-        <button type="submit">Search</button>
+        <button type="submit" className="ml-2 p-2 bg-blue-500 text-white">
+          Search
+        </button>
       </form>
-      <button onClick={toggleChartType}>
+      {error && <p className="text-red-500 mb-2">{error}</p>}
+      <button
+        onClick={toggleChartType}
+        className="mb-4 p-2 bg-green-500 text-white"
+      >
         Switch to {chartType === "bar" ? "Line" : "Bar"} Chart
       </button>
-      <button onClick={toggleChartView} className="block">
+      <button
+        onClick={toggleChartView}
+        className="mb-4 p-2 bg-yellow-500 text-white"
+      >
         Switch to {enhanced === "enhanced" ? "Standard" : "Enhanced"} Chart
       </button>
-      <ResponsiveContainer width="80%" height={500}>
+      <ResponsiveContainer width="80%" height={500} style={{ margin: "auto" }}>
         {chartType === "bar" ? (
           <BarChart
             data={chartData}
@@ -154,7 +176,9 @@ const CandlestickChart: React.FC = () => {
         )}
       </ResponsiveContainer>
       {latestPrice !== null && (
-        <p>Last Trading Day Closing Price: ${latestPrice.toFixed(2)}</p>
+        <p className="mt-8">
+          Last Trading Day Closing Price: ${latestPrice.toFixed(2)}
+        </p>
       )}
     </div>
   );
