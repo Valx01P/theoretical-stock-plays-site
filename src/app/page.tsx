@@ -4,7 +4,6 @@
 // import chartLoadingSkeleton from "../../public/chart_loading_skeleton.png";
 
 import DisplayScreen from "./components/DisplayScreen";
-import DisplayActions from "./components/DisplayActions";
 // const StockChartClient = React.lazy(
 //   () => import("./components/StockChartClient")
 // );
@@ -49,9 +48,6 @@ const Home: React.FC = () => {
       </div>
       <div>
         <DisplayScreen />
-      </div>
-      <div>
-        <DisplayActions />
       </div>
     </>
   );
