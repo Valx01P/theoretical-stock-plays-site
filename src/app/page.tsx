@@ -1,11 +1,13 @@
 "use client";
-import React, { Suspense } from "react";
+// import React, { Suspense } from "react";
 // import Image from "next/image";
 // import chartLoadingSkeleton from "../../public/chart_loading_skeleton.png";
 
-const StockChartClient = React.lazy(
-  () => import("./components/StockChartClient")
-);
+import DisplayScreen from "./components/DisplayScreen";
+import DisplayActions from "./components/DisplayActions";
+// const StockChartClient = React.lazy(
+//   () => import("./components/StockChartClient")
+// );
 
 const Home: React.FC = () => {
   const scrollToGetStarted = () => {
@@ -41,9 +43,15 @@ const Home: React.FC = () => {
       </div>
 
       <div className="w-full mb-20">
-        <Suspense fallback={<StockChartFallback />}>
+        {/* <Suspense fallback={<StockChartFallback />}>
           <StockChartClient />
-        </Suspense>
+        </Suspense> */}
+      </div>
+      <div>
+        <DisplayScreen />
+      </div>
+      <div>
+        <DisplayActions />
       </div>
     </>
   );
