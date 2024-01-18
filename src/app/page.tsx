@@ -1,12 +1,8 @@
 "use client";
-// import React, { Suspense } from "react";
-// import Image from "next/image";
-// import chartLoadingSkeleton from "../../public/chart_loading_skeleton.png";
-
 import DisplayScreen from "./components/DisplayScreen";
-// const StockChartClient = React.lazy(
-//   () => import("./components/StockChartClient")
-// );
+
+import { Suspense } from "react";
+import StockChartClient from "./components/StockChartClient";
 
 const Home: React.FC = () => {
   const scrollToGetStarted = () => {
@@ -23,28 +19,28 @@ const Home: React.FC = () => {
 
   return (
     <>
-      <div className="flex flex-col items-center justify-center h-screen">
-        <h1 className="text-4xl font-bold mb-4">Welcome to T-STONK PLAYS</h1>
+      <div className="flex flex-col items-center justify-center h-screen bg-gray-950">
+        <h1 className="text-4xl font-bold pb-4">Welcome to T-STONK PLAYS</h1>
         <p className="text-lg text-gray-600">
           Create investment strategies, view the latest stocks, and more.
         </p>
         <button
           onClick={scrollToGetStarted}
-          className="mt-8 text-blue-500 hover:underline cursor-pointer"
+          className="pt-8 text-blue-500 hover:underline cursor-pointer"
         >
           Get started
         </button>
       </div>
 
       {/* Scroll-to section */}
-      <div className="w-full h-20 relative" id="stock-chart">
-        <div className="mt-4 ring-2 bg-white animate-pulse"></div>
+      <div className="w-full h-20 relative bg-gray-900" id="stock-chart">
+        <div className="pt-2 ring-2 bg-gray-950 animate-pulse"></div>
       </div>
 
-      <div className="w-full mb-20">
-        {/* <Suspense fallback={<StockChartFallback />}>
+      <div className="w-full pb-20 bg-gray-900">
+        <Suspense fallback={<StockChartFallback />}>
           <StockChartClient />
-        </Suspense> */}
+        </Suspense>
       </div>
       <div>
         <DisplayScreen />

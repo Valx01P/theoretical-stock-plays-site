@@ -5,20 +5,22 @@ const Footer: React.FC = () => {
   const githubLink = "https://github.com/Valx01P";
 
   return (
-    <footer className="bg-black p-4 text-white text-center">
-      <p>&copy; {currentYear} T-STONK PLAYS</p>
-      <p>
-        Code available on{" "}
-        <a
-          href={githubLink}
-          className="text-red-500"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          GitHub
-        </a>
-      </p>
-    </footer>
+    <>
+      <footer className="bg-gray-950 p-4 text-white text-center">
+        <p>&copy; {currentYear} T-STONK PLAYS</p>
+        <p>
+          Code available on{" "}
+          <a
+            href={githubLink}
+            className="text-red-500"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            GitHub
+          </a>
+        </p>
+      </footer>
+    </>
   );
 };
 

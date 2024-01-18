@@ -1,360 +1,160 @@
 import React, { useState } from "react";
 import { useGamblingStore } from "@/src/lib/store";
+import LineChart from "./UserDataChart";
 
 export default function DisplayActions() {
   const {
     steps,
     stepIndex,
     increasePos,
-    // decreasePos,
-    // simulateStockPriceChange,
-    // sellEntirePos,
-    // goBack,
+    decreasePos,
+    simulateStockPriceChange,
+    sellEntirePos,
+    goBack,
   } = useGamblingStore((state) => ({
     steps: state.steps,
     stepIndex: state.stepIndex,
     increasePos: state.increasePos,
-    // decreasePos: state.decreasePos,
-    // simulateStockPriceChange: state.simulateStockPriceChange,
-    // sellEntirePos: state.sellEntirePos,
-    // goBack: state.goBack,
+    decreasePos: state.decreasePos,
+    simulateStockPriceChange: state.simulateStockPriceChange,
+    sellEntirePos: state.sellEntirePos,
+    goBack: state.goBack,
   }));
 
-  const [amount, setAmount] = useState<number>(0);
-  // const [price, setPrice] = useState<number>(0);
+  const [increaseAmount, setIncreaseAmount] = useState<number>(0);
+  const [decreaseAmount, setDecreaseAmount] = useState<number>(0);
+  const [stockPrice, setStockPrice] = useState<number>(0);
 
   const handleAction = (action: () => void) => {
     action();
     console.log(steps);
   };
 
+  // Get the previous step
+  const previousStep = steps[stepIndex - 1];
+
+  // Get the current step id, dynamically changes with every new step
+  const id = stepIndex - 1;
+
+  const isIncreaseButtonDisabled =
+    stepIndex === 0 || increaseAmount <= 0 || isNaN(increaseAmount);
+  const isDecreaseButtonDisabled =
+    stepIndex === 0 ||
+    isNaN(decreaseAmount) ||
+    decreaseAmount <= 0 ||
+    decreaseAmount > previousStep?.positionAmount;
+  const isStockButtonDisabled =
+    stepIndex === 0 || stockPrice < 0 || isNaN(stockPrice);
+  const isSellButtonDisabled =
+    stepIndex === 0 || previousStep?.status === "COMPLETED";
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <code className="font-mono font-bold">display actions</code>
-      <div className="flex space-x-4 mb-8">
-        <button
-          className={`${
-            stepIndex < 0
-              ? "bg-gray-500 cursor-not-allowed"
-              : "bg-blue-500 hover:bg-blue-700"
-          } text-white font-bold py-2 px-4 rounded`}
-          onClick={() => handleAction(() => increasePos(stepIndex - 1, 1000))}
-          disabled={stepIndex === 0}
-        >
-          Increase Pos
-        </button>
-        {/* <button
-          className={`${
-            stepIndex < 0
-              ? "bg-gray-500 cursor-not-allowed"
-              : "bg-blue-500 hover:bg-blue-700"
-          } text-white font-bold py-2 px-4 rounded`}
-          onClick={() => handleAction(() => decreasePos(stepIndex, 500))}
-          disabled={stepIndex === 0}
-        >
-          Decrease Pos
-        </button>
-        <button
-          className={`${
-            stepIndex < 0
-              ? "bg-gray-500 cursor-not-allowed"
-              : "bg-blue-500 hover:bg-blue-700"
-          } text-white font-bold py-2 px-4 rounded`}
-          onClick={() =>
-            handleAction(() => simulateStockPriceChange(stepIndex, 420))
-          }
-          disabled={stepIndex === 0}
-        >
-          Simulate Price Change
-        </button>
-        <button
-          className={`${
-            stepIndex < 0
-              ? "bg-gray-500 cursor-not-allowed"
-              : "bg-blue-500 hover:bg-blue-700"
-          } text-white font-bold py-2 px-4 rounded`}
-          onClick={() =>
-            handleAction(() => sellEntirePos(stepIndex, "COMPLETED"))
-          }
-          disabled={stepIndex === 0}
-        >
-          Sell Entire Pos
-        </button>
-        <button
-          className={`${
-            stepIndex < 0
-              ? "bg-gray-500 cursor-not-allowed"
-              : "bg-blue-500 hover:bg-blue-700"
-          } text-white font-bold py-2 px-4 rounded`}
-          onClick={() => handleAction(() => goBack())}
-          disabled={stepIndex === 0}
-        >
-          Go Back
-        </button> */}
-      </div>
-      <div>
-        <label>
-          Amount:
-          <input
-            type="number"
-            value={amount}
-            onChange={(e) => setAmount(parseFloat(e.target.value))}
-            placeholder="Amount"
-            className="p-2 text-black"
-            required
-          />
-        </label>
-      </div>
-      {/* {stepIndex > 0 && (
+    <>
+      <main className="flex min-h-screen flex-col items-center justify-between p-12 bg-gray-900">
+        <LineChart />
+        <code className="font-mono font-bold">display actions</code>
+        <div className="flex space-x-4 mb-8">
+          <button
+            className={`${
+              stepIndex < 0 || isIncreaseButtonDisabled || isSellButtonDisabled
+                ? "bg-gray-500 cursor-not-allowed"
+                : "bg-blue-500 hover:bg-blue-700"
+            } text-white font-bold py-2 px-4 rounded`}
+            onClick={() => handleAction(() => increasePos(id, increaseAmount))}
+            disabled={isIncreaseButtonDisabled || isSellButtonDisabled}
+          >
+            Increase Pos
+          </button>
+          <button
+            className={`${
+              stepIndex < 0 || isDecreaseButtonDisabled || isSellButtonDisabled
+                ? "bg-gray-500 cursor-not-allowed"
+                : "bg-blue-500 hover:bg-blue-700"
+            } text-white font-bold py-2 px-4 rounded`}
+            onClick={() => handleAction(() => decreasePos(id, decreaseAmount))}
+            disabled={isDecreaseButtonDisabled || isSellButtonDisabled}
+          >
+            Decrease Pos
+          </button>
+          <button
+            className={`${
+              stepIndex < 0 || isStockButtonDisabled || isSellButtonDisabled
+                ? "bg-gray-500 cursor-not-allowed"
+                : "bg-blue-500 hover:bg-blue-700"
+            } text-white font-bold py-2 px-4 rounded`}
+            onClick={() =>
+              handleAction(() => simulateStockPriceChange(id, stockPrice))
+            }
+            disabled={isStockButtonDisabled || isSellButtonDisabled}
+          >
+            Update Stock Price
+          </button>
+          <button
+            className={`${
+              stepIndex < 0 || isSellButtonDisabled
+                ? "bg-gray-500 cursor-not-allowed"
+                : "bg-blue-500 hover:bg-blue-700"
+            } text-white font-bold py-2 px-4 rounded`}
+            onClick={() => handleAction(() => sellEntirePos(id))}
+            disabled={isSellButtonDisabled}
+          >
+            Sell Entire Pos
+          </button>
+          <button
+            className={`${
+              stepIndex < 0
+                ? "bg-gray-500 cursor-not-allowed"
+                : "bg-blue-500 hover:bg-blue-700"
+            } text-white font-bold py-2 px-4 rounded`}
+            onClick={() => handleAction(() => goBack())}
+            disabled={stepIndex === 0}
+          >
+            Back
+          </button>
+        </div>
+        {/* Input sections vvv */}
         <div>
           <label>
-            Price:
+            Increase By:
             <input
               type="number"
-              value={price || ""}
-              onChange={(e) => setPrice(parseFloat(e.target.value))}
-              placeholder="Price"
+              value={increaseAmount}
+              onChange={(e) => setIncreaseAmount(parseFloat(e.target.value))}
+              placeholder="Increase Amount"
               className="p-2 text-black"
               required
             />
           </label>
         </div>
-      )} */}
-      <h1>Current State:</h1>
-      <pre>{JSON.stringify({ steps, stepIndex }, null, 2)}</pre>
-    </main>
+        <div>
+          <label>
+            Decrease By:
+            <input
+              type="number"
+              value={decreaseAmount}
+              onChange={(e) => setDecreaseAmount(parseFloat(e.target.value))}
+              placeholder="Decrease Amount"
+              className="p-2 text-black"
+              required
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            Stock Price:
+            <input
+              type="number"
+              value={stockPrice}
+              onChange={(e) => setStockPrice(parseFloat(e.target.value))}
+              placeholder="Updated Stock Price"
+              className="p-2 text-black"
+              required
+            />
+          </label>
+        </div>
+        <h1>Current State:</h1>
+        <pre>{JSON.stringify({ steps, stepIndex }, null, 2)}</pre>
+      </main>
+    </>
   );
 }
-
-//__________________________________________________________________________________________________________
-
-// import React, { useState } from "react";
-// import { useGamblingStore } from "@/src/lib/store";
-
-// export default function DisplayActions() {
-//   const { steps, stepIndex, increasePos } = useGamblingStore((state) => ({
-//     steps: state.steps,
-//     stepIndex: state.stepIndex,
-//     increasePos: state.increasePos,
-//   }));
-
-//   const [amount, setAmount] = useState<number>(0);
-
-//   const handleIncreasePos = async () => {
-//     const currentStep = stepIndex > 0 ? steps[stepIndex - 1] : null;
-//     if (currentStep) {
-//       console.log("Current Step:", currentStep);
-//       await increasePos(currentStep.id, amount); // Wait for the state to update
-//     } else {
-//       console.error("Current step is undefined");
-//     }
-//   };
-
-//   return (
-//     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-//       <code className="font-mono font-bold">display actions</code>
-//       <div className="flex space-x-4 mb-8">
-//         <button
-//           className={`${
-//             stepIndex < 0
-//               ? "bg-gray-500 cursor-not-allowed"
-//               : "bg-blue-500 hover:bg-blue-700"
-//           } text-white font-bold py-2 px-4 rounded`}
-//           onClick={handleIncreasePos}
-//           disabled={stepIndex === 0}
-//         >
-//           Increase Pos
-//         </button>
-//         {/* Other buttons go here */}
-//       </div>
-//       <div>
-//         <label>
-//           Amount:
-//           <input
-//             type="number"
-//             value={amount}
-//             onChange={(e) => setAmount(parseFloat(e.target.value))}
-//             placeholder="Amount"
-//             className="p-2 text-black"
-//             required
-//           />
-//         </label>
-//       </div>
-//       <h1>Current State:</h1>
-//       <pre>{JSON.stringify({ steps, stepIndex }, null, 2)}</pre>
-//     </main>
-//   );
-// }
-
-//-----------------------------------------------------------------------------------------------------------
-
-// import React, { useState } from "react";
-// import { useGamblingStore } from "@/src/lib/store";
-
-// export default function DisplayActions() {
-//   const {
-//     steps,
-//     stepIndex,
-//     increasePos,
-//     decreasePos,
-//     simulateStockPriceChange,
-//     sellEntirePos,
-//     goBack,
-//   } = useGamblingStore((state) => ({
-//     steps: state.steps,
-//     stepIndex: state.stepIndex,
-//     increasePos: state.increasePos,
-//     decreasePos: state.decreasePos,
-//     simulateStockPriceChange: state.simulateStockPriceChange,
-//     sellEntirePos: state.sellEntirePos,
-//     goBack: state.goBack,
-//   }));
-
-//   const [amount, setAmount] = useState<number>(0);
-
-//   const handleAction = (action: () => void) => {
-//     action();
-//   };
-
-//   return (
-//     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-//       <code className="font-mono font-bold">display actions</code>
-//       <div className="flex space-x-4 mb-8">
-//         <button
-//           className={`${
-//             stepIndex < 0
-//               ? "bg-gray-500 cursor-not-allowed"
-//               : "bg-blue-500 hover:bg-blue-700"
-//           } text-white font-bold py-2 px-4 rounded`}
-//           onClick={() => handleAction(() => increasePos(stepIndex, amount))}
-//           disabled={stepIndex === 0}
-//         >
-//           Increase Pos
-//         </button>
-//         <button
-//           className={`${
-//             stepIndex < 0
-//               ? "bg-gray-500 cursor-not-allowed"
-//               : "bg-blue-500 hover:bg-blue-700"
-//           } text-white font-bold py-2 px-4 rounded`}
-//           onClick={() => handleAction(() => decreasePos(stepIndex, amount))}
-//           disabled={stepIndex === 0}
-//         >
-//           Decrease Pos
-//         </button>
-//         <button
-//           className={`${
-//             stepIndex < 0
-//               ? "bg-gray-500 cursor-not-allowed"
-//               : "bg-blue-500 hover:bg-blue-700"
-//           } text-white font-bold py-2 px-4 rounded`}
-//           onClick={() =>
-//             handleAction(() => simulateStockPriceChange(stepIndex, amount))
-//           }
-//           disabled={stepIndex === 0}
-//         >
-//           Simulate Price Change
-//         </button>
-//         <button
-//           className={`${
-//             stepIndex < 0
-//               ? "bg-gray-500 cursor-not-allowed"
-//               : "bg-blue-500 hover:bg-blue-700"
-//           } text-white font-bold py-2 px-4 rounded`}
-//           onClick={() =>
-//             handleAction(() => sellEntirePos(stepIndex, "COMPLETED"))
-//           }
-//           disabled={stepIndex === 0}
-//         >
-//           Sell Entire Pos
-//         </button>
-//         <button
-//           className={`${
-//             stepIndex < 0
-//               ? "bg-gray-500 cursor-not-allowed"
-//               : "bg-blue-500 hover:bg-blue-700"
-//           } text-white font-bold py-2 px-4 rounded`}
-//           onClick={() => handleAction(() => goBack())}
-//           disabled={stepIndex === 0}
-//         >
-//           Go Back
-//         </button>
-//       </div>
-//       <div>
-//         <label>
-//           Amount:
-//           <input
-//             type="number"
-//             value={amount}
-//             onChange={(e) => setAmount(parseFloat(e.target.value))}
-//             placeholder="Amount"
-//             className="p-2 text-black"
-//             required
-//           />
-//         </label>
-//       </div>
-//       <h1>Current State:</h1>
-//       <pre>{JSON.stringify({ steps, stepIndex }, null, 2)}</pre>
-//     </main>
-//   );
-// }
-//__________________________________________________________________________________
-
-// import { useGamblingStore } from "@/src/lib/store";
-
-// export default function DisplayActions() {
-//   const {
-//     steps,
-//     stepIndex,
-//     increasePos,
-//     decreasePos,
-//     simulateStockPriceChange,
-//     sellEntirePos,
-//     goBack,
-//   } = useGamblingStore((state) => ({
-//     steps: state.steps,
-//     stepIndex: state.stepIndex,
-//     increasePos: state.increasePos,
-//     decreasePos: state.decreasePos,
-//     simulateStockPriceChange: state.simulateStockPriceChange,
-//     sellEntirePos: state.sellEntirePos,
-//     goBack: state.goBack,
-//   }));
-
-//   const handleIncreasePos = () => {
-//     increasePos(1, 2);
-//   };
-
-//   const handleDecreasePos = () => {
-//     decreasePos(1, 2);
-//   };
-
-//   const handleSimulateStockPriceChange = () => {
-//     simulateStockPriceChange(1, 2);
-//   };
-
-//   const handleSellEntirePos = () => {
-//     sellEntirePos(1, "COMPLETED");
-//   };
-
-//   const handleGoBack = () => {
-//     goBack(1);
-//   };
-
-//   return (
-//     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-//       <code className="font-mono font-bold">display screen</code>
-//       <button
-//         className={`${
-//           stepIndex > 0
-//             ? "bg-gray-500 cursor-not-allowed"
-//             : "bg-blue-500 hover:bg-blue-700"
-//         } text-white font-bold py-2 px-4 rounded`}
-//         onClick={handleIncreasePos}
-//         disabled={stepIndex > 0} // Disable button if stepIndex is greater than 0
-//       ></button>
-//       <h1>Current State:</h1>
-//       <pre>{JSON.stringify({ steps, stepIndex }, null, 2)}</pre>
-//     </main>
-//   );
-// }

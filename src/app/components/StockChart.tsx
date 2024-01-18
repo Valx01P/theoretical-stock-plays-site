@@ -75,7 +75,9 @@ const CandlestickChart: React.FC = () => {
 
       // Check if the error is a 429 status code (Too Many Requests)
       if (error.response && error.response.status === 429) {
-        setError("Too many requests. Please wait 1 minute and try again.");
+        setError(
+          "I'm out of API credits! Please wait 1 minute and try again, maybe."
+        );
       } else {
         setError(
           "An error occurred. Possible wrong format. Correct Format Example: TSLA"
@@ -100,7 +102,6 @@ const CandlestickChart: React.FC = () => {
   };
 
   useEffect(() => {
-    // Fetch default data on component mount
     fetchData("SPY");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
