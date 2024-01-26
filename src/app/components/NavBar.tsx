@@ -6,7 +6,7 @@ const NavBar: React.FC = () => {
       <h1 className="text-white text-2xl font-bold hover:text-blue-500 transition duration-1000">
         <a href="/">T-STONK PLAYS</a>
       </h1>
-      <ul className="flex space-x-12 mr-12">
+      <ul className="flex space-x-12 mr-20">
         <li>
           <a
             href="/"
@@ -23,14 +23,14 @@ const NavBar: React.FC = () => {
             About
           </a>
         </li>
-        <li>
+        {/* <li>
           <a
             href="/buy-the-dip-calculator"
             className="text-white text-lg hover:text-blue-500 transition duration-1000"
           >
             BTD-Calc
           </a>
-        </li>
+        </li> */}
       </ul>
     </nav>
   );

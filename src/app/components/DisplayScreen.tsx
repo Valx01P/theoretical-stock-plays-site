@@ -16,8 +16,7 @@ export default function DisplayScreen() {
     isNaN(positionAmount) ||
     isNaN(stockPrice) ||
     positionAmount <= 0 ||
-    stockPrice <= 0 ||
-    positionAmount < stockPrice;
+    stockPrice <= 0;
 
   const handleStartNewPos = (e: React.FormEvent) => {
     e.preventDefault();

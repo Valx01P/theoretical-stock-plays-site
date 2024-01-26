@@ -113,47 +113,114 @@ export default function DisplayActions() {
           </button>
         </div>
         {/* Input sections vvv */}
-        <div>
-          <label>
-            Increase By:
-            <input
-              type="number"
-              value={increaseAmount}
-              onChange={(e) => setIncreaseAmount(parseFloat(e.target.value))}
-              placeholder="Increase Amount"
-              className="p-2 text-black"
-              required
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            Decrease By:
-            <input
-              type="number"
-              value={decreaseAmount}
-              onChange={(e) => setDecreaseAmount(parseFloat(e.target.value))}
-              placeholder="Decrease Amount"
-              className="p-2 text-black"
-              required
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            Stock Price:
-            <input
-              type="number"
-              value={stockPrice}
-              onChange={(e) => setStockPrice(parseFloat(e.target.value))}
-              placeholder="Updated Stock Price"
-              className="p-2 text-black"
-              required
-            />
-          </label>
+        <div className="flex flex-col space-y-4">
+          <div className="flex justify-between">
+            <label className="bg-green-200 p-3 w-full text-black rounded">
+              <strong>Increase By:</strong>
+              <input
+                type="number"
+                value={increaseAmount}
+                onChange={(e) => setIncreaseAmount(parseFloat(e.target.value))}
+                placeholder="Increase Amount"
+                className="p-2 text-black"
+                required
+              />
+            </label>
+          </div>
+          <div className="flex justify-between">
+            <label className="bg-red-200 p-3 text-black rounded">
+              <strong>Decrease By:</strong>
+              <input
+                type="number"
+                value={decreaseAmount}
+                onChange={(e) => setDecreaseAmount(parseFloat(e.target.value))}
+                placeholder="Decrease Amount"
+                className="p-2 text-black"
+                required
+              />
+            </label>
+          </div>
+          <div className="flex justify-between">
+            <label className="bg-purple-300 p-3 w-full text-black rounded">
+              <strong>Stock Price:</strong>
+              <input
+                type="number"
+                value={stockPrice}
+                onChange={(e) => setStockPrice(parseFloat(e.target.value))}
+                placeholder="Updated Stock Price"
+                className="p-2 text-black"
+                required
+              />
+            </label>
+          </div>
         </div>
         <h1>Current State:</h1>
-        <pre>{JSON.stringify({ steps, stepIndex }, null, 2)}</pre>
+        <table className="table-auto bg-orange-200 text-black m-4 p-4 rounded-md">
+          <thead>
+            <tr>
+              <th className="border p-2 bg-slate-600">Step</th>
+              <th className="border p-2 bg-gray-500">Status</th>
+              <th className="border p-2 bg-green-200">Position Value</th>
+              <th className="border p-2 bg-purple-300">Stock Price</th>
+              <th className="border p-2 bg-blue-300">Shares</th>
+              <th className="border p-2 bg-pink-300">Total Profit</th>
+              <th className="border p-2 bg-red-200">Decreased By</th>
+              <th className="border p-2 bg-green-200">Increased By</th>
+              <th className="border p-2 bg-orange-200">Total $ Put In</th>
+              {steps.some((step) => step.status === "COMPLETED") && (
+                <>
+                  <th className="border p-2 bg-violet-300">Total Losses</th>
+                  <th className="border p-2 bg-cyan-300">Total Gains</th>
+                  <th className="border p-2 bg-fuchsia-300">Profit Sold</th>
+                </>
+              )}
+            </tr>
+          </thead>
+          <tbody>
+            {steps.map((step) => (
+              <tr key={step.id}>
+                <td className="border p-2 bg-slate-600">{step.id}</td>
+                <td className="border p-2 bg-gray-500">{step.status}</td>
+                <td className="border p-2 bg-green-200">
+                  ${step.positionAmount.toFixed(2)}
+                </td>
+                <td className="border p-2 bg-purple-300">
+                  ${step.stockPrice.toFixed(2)}
+                </td>
+                <td className="border p-2 bg-blue-300">
+                  {step.shares.toFixed(2)}
+                </td>
+                <td className="border p-2 bg-pink-300">
+                  ${step.totalProfit.toFixed(2)}
+                </td>
+                <td className="border p-2 bg-red-200">
+                  ${step.decreasedBy.toFixed(2)}
+                </td>
+                <td className="border p-2 bg-green-200">
+                  ${step.increasedBy.toFixed(2)}
+                </td>
+                <td className="border p-2 bg-orange-200">
+                  ${step.totalPutIn.toFixed(2)}
+                </td>
+                {step.status === "COMPLETED" && (
+                  <>
+                    <td className="border p-2 bg-violet-300">
+                      ${step.totalLosses.toFixed(2)}
+                    </td>
+                    <td className="border p-2 bg-cyan-300">
+                      ${step.totalGains.toFixed(2)}
+                    </td>
+                    <td className="border p-2 bg-fuchsia-300">
+                      ${step.profitSold.toFixed(2)}
+                    </td>
+                  </>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        {/* <pre>{JSON.stringify({ steps, stepIndex }, null, 2)}</pre> */}
       </main>
     </>
   );
