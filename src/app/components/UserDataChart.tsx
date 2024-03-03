@@ -1,54 +1,51 @@
-import Highcharts from "highcharts";
-import HighchartsReact from "highcharts-react-official";
-import { useGamblingStore } from "@/src/lib/store";
-
-Highcharts.setOptions({
-  chart: {
-    backgroundColor: "#1a1a1a",
-  },
-  title: {
-    style: {
-      color: "#ffffff",
-    },
-  },
-  xAxis: {
-    labels: {
-      style: {
-        color: "#ffffff",
-      },
-    },
-  },
-  yAxis: {
-    labels: {
-      style: {
-        color: "#ffffff",
-      },
-    },
-  },
-});
+import React from 'react';
+import Highcharts from 'highcharts';
+import HighchartsReact from 'highcharts-react-official';
+import { useGamblingStore } from '@/src/lib/store';
 
 const LineChart: React.FC = () => {
   const steps = useGamblingStore((state) => state.steps);
   const lastStep = steps[steps.length - 1];
 
+  // Set Highcharts options directly in the chartOptions object
   const chartOptions: Highcharts.Options = {
     chart: {
-      type: "line",
+      type: 'line',
       width: 720,
       height: 500,
+      backgroundColor: '#1a1a1a', // Set background color here
     },
     title: {
-      text: "Position Amount Over Steps",
+      text: 'Position Amount Over Steps',
+      style: {
+        color: '#ffffff',
+      },
     },
     xAxis: {
       categories: steps.map((step) => step.id.toString()),
       title: {
-        text: "Step Index",
+        text: 'Step Index',
+        style: {
+          color: '#ffffff',
+        },
+      },
+      labels: {
+        style: {
+          color: '#ffffff',
+        },
       },
     },
     yAxis: {
       title: {
-        text: "Position Amount",
+        text: 'Position Amount',
+        style: {
+          color: '#ffffff',
+        },
+      },
+      labels: {
+        style: {
+          color: '#ffffff',
+        },
       },
     },
     plotOptions: {
@@ -62,24 +59,24 @@ const LineChart: React.FC = () => {
           value: step.totalPutIn,
           color:
             lastStep.positionAmount < lastStep.totalPutIn
-              ? "#FF0000"
+              ? '#FF0000'
               : lastStep.positionAmount > lastStep.totalPutIn
-              ? "#00FF00"
-              : "#0000FF",
+              ? '#00FF00'
+              : '#0000FF',
         })),
       } as Highcharts.PlotLineOptions,
     },
     series: [
       {
-        type: "line",
-        name: "Position Amount",
+        type: 'line',
+        name: 'Position Amount',
         data: steps.map((step) => step.positionAmount),
         color:
           lastStep.positionAmount < lastStep.totalPutIn
-            ? "#FF0000"
+            ? '#FF0000'
             : lastStep.positionAmount > lastStep.totalPutIn
-            ? "#00FF00"
-            : "#0000FF",
+            ? '#00FF00'
+            : '#0000FF',
       } as Highcharts.SeriesLineOptions,
     ],
   };
